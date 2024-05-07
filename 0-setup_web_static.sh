@@ -20,6 +20,9 @@ for folder in "${directory[@]}"; do
         echo "Creating $folder"
         sudo mkdir $folder
         echo "The $folder directory has been created."
+	echo "Changing owner to $USER"
+        sudo chown -R $USER:$USER $folder
+        echo "Owner changed to $USER"
     else
         echo "The $folder directory already exists."
     fi
