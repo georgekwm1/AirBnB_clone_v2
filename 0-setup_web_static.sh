@@ -32,7 +32,7 @@ for folder in "${directory[@]}"; do
 #Check if the symbolic link already exists, it should be deleted and recreated every time the script is ran.
 
 
-if [! -f "${directory[1]}/current" ]; then
+if [! -f "${directory[1]}current" ]; then
     echo "Creating symlink"
     ln -s ${directory[4]} ${directory[1]}current
 else
