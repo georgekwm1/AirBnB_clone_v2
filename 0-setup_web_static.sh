@@ -20,9 +20,9 @@ for folder in "${directory[@]}"; do
         echo "Creating $folder"
         sudo mkdir $folder
         echo "The $folder directory has been created."
-	echo "Changing owner to $USER"
-        sudo chown -R $USER:$USER $folder
-        echo "Owner changed to $USER"
+	echo "Changing owner to ubuntu"
+        sudo chown -R ubuntu:ubuntu $folder
+        echo "Owner changed to ubuntu"
     else
         echo "The $folder directory already exists."
     fi
@@ -33,12 +33,12 @@ for folder in "${directory[@]}"; do
 
 if [! -f "${directory[1]}/current" ]; then
     echo "Creating symlink"
-    ln -s ${directory[4]} ${directory[1]}/current
+    ln -s ${directory[4]} ${directory[1]}current
 else
     echo "The symlink already exists."
     echo "Removing symlink and recreating a new symlink"
-    rm -r $directory{[1]}/current
-    ln -s $directory{[4]} $directory{[1]}/current
+    rm -r ${directory[1]}current
+    ln -s ${directory[4]} ${directory[1]}current
 fi
 
 #Create a fake HTML file /data/web_static/releases/test/index.html
