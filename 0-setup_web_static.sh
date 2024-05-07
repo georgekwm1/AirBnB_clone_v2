@@ -22,6 +22,7 @@ for folder in "${directory[@]}"; do
         echo "The $folder directory has been created."
 	echo "Changing owner to ubuntu"
         sudo chown -R ubuntu:ubuntu $folder
+	sudo u+x $folder
         echo "Owner changed to ubuntu"
     else
         echo "The $folder directory already exists."
