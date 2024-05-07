@@ -29,12 +29,12 @@ for folder in "${directory[@]}"; do
 link= "/data/web_static/current"
 if [! -f"$link" ]; then
     echo "Creating symlink"
-    ln -sfn $link $directory[4]current
+    ln -sfn $link $directory[4]/current
 else
     echo "The symlink already exists."
     echo "Removing symlink and recreating a new symlink"
     rm -r $link
-    ln -sfn $link $directory[4]current
+    ln -sfn $link $directory[4]/current
 
 #Create a fake HTML file /data/web_static/releases/test/index.html
 touch /data/web_static/releases/test/index.html
