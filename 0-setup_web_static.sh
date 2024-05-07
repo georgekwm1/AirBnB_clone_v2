@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-#Write a Bash script that sets up your web servers for the deployment of web_static
 
-#Checks if nginx is installed and installs it
+# Install Nginx if not already installed
 if ! command -v nginx &> /dev/null; then
     echo "Nginx is not installed. Installing..."
     sudo apt-get update
@@ -10,61 +9,69 @@ if ! command -v nginx &> /dev/null; then
 else
     echo "Nginx is already installed."
 fi
-#Create the folder /data/ if it doesn’t already exist
-directory=("/data/" "/data/web_static/"
- "/data/web_static/releases/" "/data/web_static/shared/"
- "/data/web_static/releases/test/")
 
-for folder in "${directory[@]}"; do
+# Directories creation and ownership
+directories=("/data/" "/data/web_static/" "/data/web_static/releases/" "/data/web_static/shared/" "/data/web_static/releases/test/")
+
+for folder in "${directories[@]}"; do
     if [ ! -d "$folder" ]; then
         echo "Creating $folder"
-        sudo mkdir $folder
+        sudo mkdir -p "$folder"
         echo "The $folder directory has been created."
-	echo "Changing owner to ubuntu"
-        sudo chown -R ubuntu:ubuntu $folder
-	sudo u+x $folder
+
+        echo "Changing owner to ubuntu"
+        sudo chown -R ubuntu:ubuntu "$folder"
         echo "Owner changed to ubuntu"
     else
         echo "The $folder directory already exists."
     fi
-    done
+done
 
-#Check if the symbolic link already exists, it should be deleted and recreated every time the script is ran.
-
-
-if [! -f "${directory[1]}current" ]; then
-    echo "Creating symlink"
-    ln -s ${directory[4]} ${directory[1]}current
-else
-    echo "The symlink already exists."
-    echo "Removing symlink and recreating a new symlink"
-    rm -r ${directory[1]}current
-    ln -s ${directory[4]} ${directory[1]}current
-fi
-
-#Create a fake HTML file /data/web_static/releases/test/index.html
-touch /data/web_static/releases/test/index.html
+# Create a fake HTML file /data/web_static/releases/test/index.html
+sudo touch /data/web_static/releases/test/index.html
 echo "<html> 
   <head> 
   </head> 
   <body> 
     Holberton School
-    </body>
-  </html>" | sudo tee /data/web_static/releases/test/index.html
+  </body>
+</html>" | sudo tee /data/web_static/releases/test/index.html
 
-#Update the Nginx configuration to serve the content of /data/web_static/releases/test/
-#to hbnb
-echo "server {
+# Set appropriate permissions for the HTML file
+sudo chown -R ubuntu:ubuntu /data/web_static/releases/test/index.html
+
+# Check and recreate symbolic link
+if [ ! -e "/data/web_static/current" ]; then
+    echo "Creating symlink"
+    sudo ln -s /data/web_static/releases/test/ /data/web_static/current
+else
+    echo "The symlink already exists."
+    echo "Removing symlink and recreating a new symlink"
+    sudo rm -f /data/web_static/current
+    sudo ln -s /data/web_static/releases/test/ /data/web_static/current
+fi
+
+# Update Nginx configuration
+sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/holberton
+server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    add_header X-Served-By $HOSTNAME;
+    add_header X-Served-By \$HOSTNAME;
     root /data/web_static/releases/test/;
     index index.html;
     server_name _;
-    location /hbnb_static {
-        alias /data/web_static/current/; 
+    location /hbnb_static/ {
+        alias /data/web_static/current/;
     }
-} ">>/etc/nginx/conf.d/default
+}
+EOF'
 
-#Restart Nginx
+# Activate the new configuration by linking to sites-enabled
+sudo ln -sf /etc/nginx/sites-available/holberton /etc/nginx/sites-enabled/holberton
+
+# Remove default Nginx configuration if exists
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Restart Nginx
 sudo service nginx restart
+
