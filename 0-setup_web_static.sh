@@ -25,10 +25,7 @@ for folder in "${directory[@]}"; do
         echo "The $folder directory already exists."
     fi
     done
-#Change owner of directory
-echo "Changing owner to ubuntu"
-sudo chown -R ubuntu:ubuntu ${directory[0]}
-echo "Owner changed to ubuntu"
+
 #Check if the symbolic link already exists, it should be deleted and recreated every time the script is ran.
 
 if [! -f "${directory[1]}current" ]; then
@@ -65,6 +62,11 @@ echo "server {
 } ">>/etc/nginx/sites_available/default
 
 ln -s /etc/nginx/sites_available/default /etc/nginx/sites_enabled/default
+
+#Change owner of directory
+echo "Changing owner to ubuntu"
+sudo chown -R ubuntu:ubuntu ${directory[0]}
+echo "Owner changed to ubuntu"
 
 #Restart Nginx
 sudo service nginx restart
