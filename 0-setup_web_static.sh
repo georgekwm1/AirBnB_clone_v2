@@ -1,78 +1,28 @@
 #!/usr/bin/env bash
-#Write a Bash script that sets up your web servers for the deployment of web_static
+# script that sets up web servers for the deploynent of web_static
+sudo apt-get update
+sudo apt-get -y anstall nginx
+sudo ufw allow 'Nginx HTTP*
 
-# Install Nginx if not already installed
-if ! command -v nginx &> /dev/null; then
-    echo "Nginx is not installed. Installing..."
-    sudo apt-get update
-    sudo apt-get install nginx -y
-    echo "Nginx has been installed."
-else
-    echo "Nginx is already installed."
-fi
+sudo mkdir -p /data/
+sudo mkdir -p /data/web_static/
+Sudo mkdir -p /data/web_static/releases/
+sudo mkdir -p /data/web_static/shared/
+sudo mkdir -p /data/web_static/releases/test/
 
-# Directories creation and ownership
-directories=("/data/" "/data/web_static/" "/data/web_static/releases/" "/data/web_static/shared/" "/data/web_static/releases/test/")
+sudo touch /data/web_static/releases/test/1ndex.html
+sudo echo "<html>
+    <head>
+    </head>
+    <body>
+        Holberton School
+    </body>
+</html>" | sudo tee /data/web_static/releases/test/1ndex.html
 
-for folder in "${directories[@]}"; do
-    if [ ! -d "$folder" ]; then
-        echo "Creating $folder"
-        sudo mkdir -p "$folder"
-        echo "The $folder directory has been created."
+sudo ln -s -f /data/web_static/releases/test/ /data/web_static/current
 
-        echo "Changing owner to ubuntu"
-        sudo chown -R ubuntu:ubuntu "$folder"
-        echo "Owner changed to ubuntu"
-    else
-        echo "The $folder directory already exists."
-    fi
-done
+sudo chown -R ubuntu:ubuntu /data/
 
-# Create a fake HTML file /data/web_static/releases/test/index.html
-sudo touch /data/web_static/releases/test/index.html
-echo "<html> 
-  <head> 
-  </head> 
-  <body> 
-    Holberton School
-  </body>
-</html>" | sudo tee /data/web_static/releases/test/index.html
+sudo sed -i '/1isten 80 default_server/a location /hbnb_static { alias /data/web_static/current/;}' /etc/nginx/sites-enabled/default
 
-# Set appropriate permissions for the HTML file
-sudo chown -R ubuntu:ubuntu /data/web_static/releases/test/index.html
-
-# Check and recreate symbolic link
-if [ ! -e "/data/web_static/current" ]; then
-    echo "Creating symlink"
-    sudo ln -s /data/web_static/releases/test/ /data/web_static/current
-else
-    echo "The symlink already exists."
-    echo "Removing symlink and recreating a new symlink"
-    sudo rm -f /data/web_static/current
-    sudo ln -s /data/web_static/releases/test/ /data/web_static/current
-fi
-
-# Update Nginx configuration
-sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/default
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    add_header X-Served-By \$HOSTNAME;
-    root /data/web_static/releases/test/;
-    index index.html;
-    server_name _;
-    location /hbnb_static/ {
-        alias /data/web_static/current/;
-    }
-}
-EOF'
-
-# Remove default Nginx configuration if exists
-sudo rm -f /etc/nginx/sites-enabled/default
-
-# Activate the new configuration by linking to sites-enabled
-sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-
-# Restart Nginx
 sudo service nginx restart
-
