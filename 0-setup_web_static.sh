@@ -49,7 +49,15 @@ echo "<html>
 
 #Update the Nginx configuration to serve the content of /data/web_static/releases/test/
 #to hbnb
-echo "server {
+if [ ! -f "/etc/nginx/sites_available/default" ]; then
+	echo "Creating /etc/nginx/sites_available/default"
+	sudo mkdir /etc/nginx/sites_available/
+	sudo touch /etc/nginx/sites_available/default
+else
+	echo "/etc/nginx/sites_available/default already exist"
+fi
+
+sudo echo "server {
     listen 80 default_server;
     listen [::]:80 default_server;
     add_header X-Served-By $HOSTNAME;
@@ -61,7 +69,8 @@ echo "server {
     }
 } ">/etc/nginx/sites_available/default
 
-ln -s /etc/nginx/sites_available/default /etc/nginx/sites_enabled/default
+sudo mkdir /etc/nginx/sites_enabled/
+sudo ln -s /etc/nginx/sites_available/default /etc/nginx/sites_enabled/default
 
 #Change owner of directory
 echo "Changing owner to ubuntu"
