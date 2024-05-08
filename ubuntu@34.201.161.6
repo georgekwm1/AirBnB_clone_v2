@@ -53,7 +53,7 @@ else
 fi
 
 # Update Nginx configuration
-sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/default
+sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/holberton
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -67,11 +67,11 @@ server {
 }
 EOF'
 
+# Activate the new configuration by linking to sites-enabled
+sudo ln -sf /etc/nginx/sites-available/holberton /etc/nginx/sites-enabled/holberton
+
 # Remove default Nginx configuration if exists
 sudo rm -f /etc/nginx/sites-enabled/default
-
-# Activate the new configuration by linking to sites-enabled
-sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 # Restart Nginx
 sudo service nginx restart
