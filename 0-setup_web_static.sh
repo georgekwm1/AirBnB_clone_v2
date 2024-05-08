@@ -30,7 +30,7 @@ for folder in "${directory[@]}"; do
 
 if [! -f "${directory[1]}current" ]; then
     echo "Creating symlink"
-    ln -s ${directory[4]} ${directory[4]}current
+    ln -s ${directory[4]} ${directory[1]}current
 else
     echo "The symlink already exists."
     echo "Removing symlink and recreating a new symlink"
