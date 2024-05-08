@@ -59,7 +59,7 @@ echo "server {
     location /hbnb_static {
         alias /data/web_static/current/; 
     }
-} ">>/etc/nginx/sites_available/default
+} ">/etc/nginx/sites_available/default
 
 ln -s /etc/nginx/sites_available/default /etc/nginx/sites_enabled/default
 
