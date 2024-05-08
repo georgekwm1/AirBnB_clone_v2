@@ -67,7 +67,7 @@ sudo echo "server {
     location /hbnb_static {
         alias /data/web_static/current/; 
     }
-} ">/etc/nginx/sites_available/default
+} " | sudo tee /etc/nginx/sites_available/default
 
 sudo mkdir /etc/nginx/sites_enabled/
 sudo ln -s /etc/nginx/sites_available/default /etc/nginx/sites_enabled/default
