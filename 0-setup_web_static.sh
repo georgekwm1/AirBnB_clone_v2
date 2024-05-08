@@ -18,7 +18,7 @@ directory=("/data/" "/data/web_static/"
 for folder in "${directory[@]}"; do
     if [ ! -d "$folder" ]; then
         echo "Creating $folder"
-        sudo mkdir $folder
+        sudo mkdir "$folder"
         echo "The $folder directory has been created."
 
     else
@@ -28,14 +28,14 @@ for folder in "${directory[@]}"; do
 
 #Check if the symbolic link already exists, it should be deleted and recreated every time the script is ran.
 
-if [! -f "${directory[1]}current" ]; then
+if [! -f '${directory[1]}current' ]; then
     echo "Creating symlink"
-    ln -s ${directory[4]} ${directory[1]}current
+    ln -s "${directory[4]}" "${directory[1]}"current
 else
     echo "The symlink already exists."
     echo "Removing symlink and recreating a new symlink"
-    rm -r ${directory[1]}current
-    ln -s ${directory[4]} ${directory[1]}current
+    rm -r "${directory[1]}"current
+    ln -s "${directory[4]}" "${directory[1]}"current
 fi
 #Create a fake HTML file /data/web_static/releases/test/index.html
 touch /data/web_static/releases/test/index.html
@@ -65,7 +65,7 @@ ln -s /etc/nginx/sites_available/default /etc/nginx/sites_enabled/default
 
 #Change owner of directory
 echo "Changing owner to ubuntu"
-sudo chown -R ubuntu:ubuntu ${directory[0]}
+sudo chown -R ubuntu:ubuntu "${directory[0]}"
 echo "Owner changed to ubuntu"
 
 #Restart Nginx
