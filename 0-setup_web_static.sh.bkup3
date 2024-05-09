@@ -30,12 +30,12 @@ for folder in "${directory[@]}"; do
 
 if [ ! -f "${directory[1]}current" ]; then
     echo "Creating symlink"
-    ln -s "${directory[4]}" "${directory[1]}"current
+    sudo ln -s "${directory[4]}" "${directory[1]}"current
 else
     echo "The symlink already exists."
     echo "Removing symlink and recreating a new symlink"
-    rm -r "${directory[1]}"current
-    ln -s "${directory[4]}" "${directory[1]}"current
+    sudo rm -r "${directory[1]}"current
+    sudo ln -s "${directory[4]}" "${directory[1]}"current
 fi
 #Create a fake HTML file /data/web_static/releases/test/index.html
 touch /data/web_static/releases/test/index.html
@@ -69,8 +69,14 @@ sudo echo "server {
     }
 } " | sudo tee /etc/nginx/sites_available/default
 
-sudo mkdir /etc/nginx/sites_enabled/
-sudo ln -sf /etc/nginx/sites_available/default /etc/nginx/sites_enabled/default
+#Creates /etc/nginx/sites_enabled/ directory
+if [ ! -d "/etc/nginx/sites_enabled/" ]; then
+	echo "Creating directory if it doesn't exist"
+	sudo mkdir /etc/nginx/sites_enabled/
+	sudo ln -sf /etc/nginx/sites_available/default /etc/nginx/sites_enabled/default
+else
+	echo "Directory already exists"
+fi
 
 #Change owner of directory
 echo "Changing owner to ubuntu"
