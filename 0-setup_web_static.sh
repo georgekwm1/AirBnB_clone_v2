@@ -2,9 +2,14 @@
 #Write a Bash script that sets up your web servers for the deployment of web_static
 
 #Checks if nginx is installed and installs it
-sudo apt-get update
-sudo apt-get -y install nginx 
-echo "Nginx has been installed."
+if ! command -v nginx &> /dev/null; then
+    echo "Nginx is not installed. Installing..."
+    sudo apt-get update
+    sudo apt-get install nginx -y
+    echo "Nginx has been installed."
+else
+    echo "Nginx is already installed."
+fi
 
 #Create the folder /data/ if it doesn’t already exist
 directory=("/data/" "/data/web_static/"
@@ -47,7 +52,7 @@ sudo echo "server {
     add_header X-Served-By $HOSTNAME;
     root /var/www/html;
     index index.html;
-    server_name ;
+    server_name _;
     location /hbnb_static {
         alias /data/web_static/current/; 
     }
