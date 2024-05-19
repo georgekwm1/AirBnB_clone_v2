@@ -7,8 +7,6 @@ from fabric.api import *
 from datetime import datetime
 from os.path import exists, isdir
 env.hosts = ['34.201.161.6', '100.25.12.248']
-env.user = 'ubuntu'
-env.key_filename = '~/.ssh/id_rsa'
 
 
 def do_pack():
@@ -39,5 +37,4 @@ def do_deploy(archive_path):
         .format(folder_name))
         run("tar -xzf /tmp/{} -C /data/web_static/releases/{}/"\
         .format(file_name, folder_name))
-    except:
-        return False
+
