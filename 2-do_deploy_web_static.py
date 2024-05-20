@@ -4,12 +4,12 @@ Fabric script based on the file 1-pack_web_static.py that distributes an
 archive to the web servers
 """
 
+
 from fabric.api import put, run, env
 from os.path import exists
 
 env.hosts = ['34.201.161.6', '100.25.12.248']
-env.user = 'ubuntu'
-env.key_filename = '~/.ssh/id_rsa'
+
 
 def do_deploy(archive_path):
     """distributes an archive to the web servers"""
